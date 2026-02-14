@@ -1,6 +1,6 @@
 # Store Manager UI
 
-![CI Status](https://github.com/usuario/store-manager-ui/actions/workflows/ci.yml/badge.svg)
+![CI Status](https://github.com/CFBruna/store-manager-ui/actions/workflows/ci.yml/badge.svg)
 ![Node Version](https://img.shields.io/badge/node->=20-success)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
