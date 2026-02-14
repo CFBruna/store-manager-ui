@@ -1,9 +1,19 @@
-export default function App() {
+import { useState } from 'react'
+
+function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <h1 className="text-4xl font-bold text-sky-400 animate-bounce">
-        Hello World - Store Manager UI
-      </h1>
-    </div>
+    <>
+      <h1>Store Manager UI</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>Data Layer Initialized. Ready for UI Components.</p>
+      </div>
+    </>
   )
 }
+
+export default App
