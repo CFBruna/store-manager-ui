@@ -36,12 +36,14 @@ This project simulates a real-world scenario consuming the [Fake Store API](http
 ### Local Development
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/CFBruna/store-manager-ui.git
    cd store-manager-ui
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
@@ -55,6 +57,7 @@ This project simulates a real-world scenario consuming the [Fake Store API](http
 ### Docker (Production Preview)
 
 1. **Build the image:**
+
    ```bash
    docker build -t store-manager .
    ```
