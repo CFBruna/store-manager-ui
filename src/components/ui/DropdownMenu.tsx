@@ -34,6 +34,7 @@ export function DropdownMenuContent({
         align === 'end' ? 'right-0' : 'left-0',
         className,
       )}
+      role="menu"
     >
       {children}
     </div>
@@ -56,6 +57,7 @@ export function DropdownMenuItem({
         'px-3 py-2 text-sm rounded-md hover:bg-gray-100 cursor-pointer transition-colors',
         className,
       )}
+      role="menuitem"
     >
       {children}
     </div>
@@ -73,6 +75,8 @@ export function DropdownMenuCheckboxItem({
 }) {
   return (
     <div
+      role="menuitemcheckbox"
+      aria-checked={checked}
       onClick={() => onCheckedChange?.(!checked)}
       className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100 cursor-pointer transition-colors"
     >

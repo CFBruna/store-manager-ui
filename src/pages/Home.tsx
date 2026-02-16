@@ -24,6 +24,7 @@ import {
   DropdownMenuCheckboxItem,
 } from '../components/ui/DropdownMenu'
 import { translateCategory } from '../lib/i18n'
+import { useIsMobile } from '../hooks/use-mobile'
 
 export function Home() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null)
@@ -37,6 +38,7 @@ export function Home() {
   const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [priceRange, setPriceRange] = useState({ min: '', max: '' })
+  const isMobile = useIsMobile()
 
   const filteredProducts = products?.filter((p) => {
     const matchesSearch =
@@ -169,9 +171,12 @@ export function Home() {
       const isOutsideButton =
         categoriesDropdownRef.current &&
         !categoriesDropdownRef.current.contains(target)
-      const isOutsideDropdown =
-        categoriesDropdownContentRef.current &&
-        !categoriesDropdownContentRef.current.contains(target)
+
+      // On desktop, content is inside button wrapper, so isOutsideButton covers it.
+      // On mobile, content is outside, so we check content ref.
+      const isOutsideDropdown = categoriesDropdownContentRef.current
+        ? !categoriesDropdownContentRef.current.contains(target)
+        : true // If no ref (desktop), consider it outside (but isOutsideButton handles the negation)
 
       if (isOutsideButton && isOutsideDropdown) {
         setShowCategoriesDropdown(false)
@@ -234,6 +239,20 @@ export function Home() {
                 </span>
               )}
             </Button>
+            {/* Desktop Dropdown: Anchored to button */}
+            {!isMobile && showCategoriesDropdown && (
+              <DropdownMenuContent className="w-64">
+                {categories.map((category) => (
+                  <DropdownMenuCheckboxItem
+                    key={category}
+                    checked={selectedCategories.includes(category)}
+                    onCheckedChange={() => toggleCategory(category)}
+                  >
+                    {translateCategory(category)}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            )}
           </div>
           <Button
             variant="outline"
@@ -262,12 +281,13 @@ export function Home() {
         </div>
 
         {/* Dropdown de categorias renderizado fora do container com scroll */}
-        {showCategoriesDropdown && (
+        {/* Mobile Dropdown: Rendered outside for overflow handling */}
+        {isMobile && showCategoriesDropdown && (
           <div
-            className="relative px-4 sm:px-0 -mt-2 mb-2"
+            className="relative px-4 sm:px-0 mb-2 z-50"
             ref={categoriesDropdownContentRef}
           >
-            <DropdownMenuContent className="w-full max-w-[calc(100vw-2rem)] sm:w-auto sm:max-w-none">
+            <DropdownMenuContent className="w-full max-w-[calc(100vw-2rem)]">
               {categories.map((category) => (
                 <DropdownMenuCheckboxItem
                   key={category}
