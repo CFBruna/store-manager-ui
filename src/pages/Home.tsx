@@ -69,10 +69,8 @@ export function Home() {
         action: {
           label: 'Desfazer',
           onClick: () => {
-            setTimeout(() => {
-              restoreProduct.mutate(productToDelete)
-              toast.success('Ação desfeita')
-            }, 500)
+            restoreProduct.mutate(productToDelete)
+            toast.success('Ação desfeita')
           },
         },
         duration: 5000,
@@ -97,10 +95,8 @@ export function Home() {
       action: {
         label: 'Desfazer',
         onClick: () => {
-          setTimeout(() => {
-            productsRestorationMap.forEach((p) => restoreProduct.mutate(p))
-            toast.success('Ação desfeita')
-          }, 500)
+          productsRestorationMap.forEach((p) => restoreProduct.mutate(p))
+          toast.success('Ação desfeita')
         },
       },
       duration: 5000,

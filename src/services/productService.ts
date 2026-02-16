@@ -54,7 +54,7 @@ const addDeletedProductId = (id: number) => {
 
 const removeDeletedProductId = (id: number) => {
   const current = getDeletedProductIds()
-  const filtered = current.filter((pid) => pid !== id)
+  const filtered = current.filter((pid) => Number(pid) !== Number(id))
   if (filtered.length !== current.length) {
     localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(filtered))
     return true
@@ -203,12 +203,12 @@ export const productService = {
   },
 
   restoreProduct: async (product: Product): Promise<Product> => {
-    if (removeDeletedProductId(product.id)) {
-      return product
-    }
+    const productId = Number(product.id)
+    removeDeletedProductId(productId)
+
     const currentLocal = getLocalProducts()
-    if (!currentLocal.some((p) => p.id === product.id)) {
-      saveLocalProduct(product)
+    if (!currentLocal.some((p) => Number(p.id) === productId)) {
+      saveLocalProduct({ ...product, id: productId })
     }
 
     return product

@@ -1,6 +1,9 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useProduct } from '../hooks/useProducts'
-import { useDeleteProduct } from '../hooks/useProductMutations'
+import {
+  useDeleteProduct,
+  useRestoreProduct,
+} from '../hooks/useProductMutations'
 import { useFavorites } from '../contexts/FavoritesContext'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
@@ -32,6 +35,7 @@ export function ProductDetails() {
   const productId = Number(id)
   const { data: product, isLoading, error } = useProduct(productId)
   const deleteProduct = useDeleteProduct()
+  const restoreProduct = useRestoreProduct()
   const { favorites, toggleFavorite } = useFavorites()
   const [is360Open, setIs360Open] = useState(false)
   const [rotation, setRotation] = useState(0)
@@ -239,10 +243,20 @@ export function ProductDetails() {
             <Button
               variant="destructive"
               onClick={() => {
+                const productToRestore = { ...product }
                 deleteProduct.mutate(Number(id))
                 setIsDeleteDialogOpen(false)
                 navigate('/')
-                toast.success('Produto excluído com sucesso')
+                toast.success('Produto excluído', {
+                  action: {
+                    label: 'Desfazer',
+                    onClick: () => {
+                      restoreProduct.mutate(productToRestore)
+                      toast.success('Produto restaurado com sucesso')
+                    },
+                  },
+                  duration: 5000,
+                })
               }}
             >
               Excluir
