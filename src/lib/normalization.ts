@@ -1,7 +1,11 @@
 export function normalizeName(name: string): string {
-  return name.trim()
+  if (!name) return ''
+  const trimmed = name.trim()
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1)
 }
 
 export function normalizeCategory(category: string): string {
-  return category.trim().toLowerCase()
+  if (!category) return ''
+  const trimmed = category.trim().toLowerCase()
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1)
 }

@@ -15,7 +15,6 @@ const getLocalProducts = (): Product[] => {
 
 const saveLocalProduct = (product: Product) => {
   const current = getLocalProducts()
-  // If it's an override, replace the existing one
   const index = current.findIndex((p) => p.id === product.id)
   let updated
   if (index !== -1) {
@@ -67,7 +66,6 @@ const getPersistentStock = (id: number): number => {
   const stored = localStorage.getItem(stockKey)
   if (stored) return parseInt(stored, 10)
 
-  // Deterministic seed based on id to keep it consistent without random
   const seed = ((id * 1597) % 100) + 1
   localStorage.setItem(stockKey, seed.toString())
   return seed
@@ -88,7 +86,6 @@ export const productService = {
 
       const apiProducts = data
         .filter((p) => !deletedIds.includes(p.id))
-        // Filter out API products that have a local override
         .filter((p) => !localProducts.some((lp) => lp.id === p.id))
         .map((product) => {
           const { title, description } = translateProduct(
@@ -98,27 +95,42 @@ export const productService = {
           )
           return {
             ...product,
-            title,
+            title: normalizeName(title),
             description,
+            category: normalizeCategory(product.category),
             price: Number((product.price * EXCHANGE_RATE).toFixed(2)),
             stock: getPersistentStock(product.id),
           }
         })
 
-      const validLocalProducts = localProducts.filter(
-        (p) => !deletedIds.includes(p.id),
-      )
+      const validLocalProducts = localProducts
+        .filter((p) => !deletedIds.includes(p.id))
+        .map((p) => ({
+          ...p,
+          title: normalizeName(p.title),
+          category: normalizeCategory(p.category),
+        }))
 
       return [...validLocalProducts, ...apiProducts]
     } catch (error) {
       console.error('Error fetching products:', error)
-      return localProducts
+      return localProducts.map((p) => ({
+        ...p,
+        title: normalizeName(p.title),
+        category: normalizeCategory(p.category),
+      }))
     }
   },
 
   getProduct: async (id: number): Promise<Product> => {
-    const local = getLocalProducts().find((p) => p.id === id)
-    if (local) return local
+    const local = getLocalProducts().find((p) => Number(p.id) === Number(id))
+    if (local) {
+      return {
+        ...local,
+        title: normalizeName(local.title),
+        category: normalizeCategory(local.category),
+      }
+    }
 
     const { data } = await api.get<Product>(`/products/${id}`)
     const { title, description } = translateProduct(
@@ -128,8 +140,9 @@ export const productService = {
     )
     return {
       ...data,
-      title,
+      title: normalizeName(title),
       description,
+      category: normalizeCategory(data.category),
       price: Number((data.price * EXCHANGE_RATE).toFixed(2)),
       stock: getPersistentStock(data.id),
     }
@@ -157,7 +170,6 @@ export const productService = {
     id: number,
     product: ProductInput,
   ): Promise<Product> => {
-    // Get existing product to preserve rating, etc.
     const existing = await productService.getProduct(id)
 
     const normalizedProduct = {
@@ -169,18 +181,15 @@ export const productService = {
       price: Number(product.price.toFixed(2)),
     }
 
-    // Sync persistent stock if modified
     if (normalizedProduct.stock !== undefined) {
       savePersistentStock(id, normalizedProduct.stock)
     }
-
-    // Always save to local as an override
     saveLocalProduct(normalizedProduct as Product)
 
     try {
       await api.put<Product>(`/products/${id}`, normalizedProduct)
     } catch {
-      // Ignore API errors as we manage state locally
+      // Ignore API errors as we manage persistence locally
     }
 
     return normalizedProduct as Product
@@ -196,7 +205,7 @@ export const productService = {
     try {
       await api.delete<Product>(`/products/${id}`)
     } catch {
-      // Ignore API errors
+      // Ignore API errors as we manage persistence locally
     }
 
     return { id } as Product
