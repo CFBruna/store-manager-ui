@@ -1,15 +1,17 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '../hooks/useProducts'
-import { useDeleteProduct, useRestoreProduct } from '../hooks/useProductMutations'
+import {
+  useDeleteProduct,
+  useRestoreProduct,
+} from '../hooks/useProductMutations'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { ProductTable } from '../components/ProductTable'
 import { Product } from '../types/product'
 import { Input } from '../components/ui/Input'
 import { Search, Plus, Filter, Download, X, Scan } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn, formatPrice } from '../lib/utils'
-import { buttonVariants } from '../components/ui/buttonVariants'
+import { formatPrice } from '../lib/utils'
 import { Button } from '../components/ui/Button'
 import {
   Dialog,
@@ -53,7 +55,7 @@ export function Home() {
   })
 
   const handleDelete = (id: number) => {
-    const product = products?.find(p => p.id === id)
+    const product = products?.find((p) => p.id === id)
     if (product) {
       setProductToDelete(product)
     }
@@ -71,7 +73,7 @@ export function Home() {
               restoreProduct.mutate(productToDelete)
               toast.success('Ação desfeita')
             }, 500)
-          }
+          },
         },
         duration: 5000,
       })
@@ -85,19 +87,21 @@ export function Home() {
   }
 
   const confirmBulkDelete = () => {
-    const productsRestorationMap = idsToDelete.map(id => products?.find(p => p.id === id)).filter(Boolean) as Product[]
+    const productsRestorationMap = idsToDelete
+      .map((id) => products?.find((p) => p.id === id))
+      .filter(Boolean) as Product[]
 
-    idsToDelete.forEach(id => deleteProduct.mutate(id))
+    idsToDelete.forEach((id) => deleteProduct.mutate(id))
 
     toast.success(`${idsToDelete.length} produtos excluídos`, {
       action: {
         label: 'Desfazer',
         onClick: () => {
           setTimeout(() => {
-            productsRestorationMap.forEach(p => restoreProduct.mutate(p))
+            productsRestorationMap.forEach((p) => restoreProduct.mutate(p))
             toast.success('Ação desfeita')
           }, 500)
-        }
+        },
       },
       duration: 5000,
     })
@@ -105,16 +109,22 @@ export function Home() {
     setIdsToDelete([])
   }
 
-  const totalProducts = products?.length || 0
-  const stockValue = filteredProducts?.reduce((acc, p) => acc + (p.price * (p.stock || 0)), 0) || 0
+  const stockValue =
+    filteredProducts?.reduce((acc, p) => acc + p.price * (p.stock || 0), 0) || 0
   const stockCost = stockValue * 0.6
   const expectedProfit = stockValue - stockCost
 
-  const lowStock = filteredProducts?.filter(p => (p.stock || 0) > 0 && (p.stock || 0) < 10).length || 0
-  const outOfStock = filteredProducts?.filter(p => (p.stock || 0) === 0).length || 0
-  const inStock = filteredProducts?.filter(p => (p.stock || 0) >= 10).length || 0
+  const lowStock =
+    filteredProducts?.filter((p) => (p.stock || 0) > 0 && (p.stock || 0) < 10)
+      .length || 0
+  const outOfStock =
+    filteredProducts?.filter((p) => (p.stock || 0) === 0).length || 0
+  const inStock =
+    filteredProducts?.filter((p) => (p.stock || 0) >= 10).length || 0
 
-  const categories = Array.from(new Set(products?.map((p) => p.category) || [])).sort()
+  const categories = Array.from(
+    new Set(products?.map((p) => p.category) || []),
+  ).sort()
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -234,7 +244,6 @@ export function Home() {
           <Scan className="w-5 h-5" />
         </Button>
 
-
         <Link to="/product/new">
           <Button className="h-10 bg-teal-500 hover:bg-teal-600 text-white font-medium px-6">
             <Plus className="w-5 h-5 mr-2" />
@@ -310,58 +319,54 @@ export function Home() {
         </div>
       )}
 
-      <Dialog open={!!productToDelete} onOpenChange={(open) => !open && setProductToDelete(null)}>
+      <Dialog
+        open={!!productToDelete}
+        onOpenChange={(open) => !open && setProductToDelete(null)}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Excluir Produto</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-slate-600">
-              Tem certeza que deseja excluir o produto <strong>{productToDelete?.title}</strong>?
+              Tem certeza que deseja excluir o produto{' '}
+              <strong>{productToDelete?.title}</strong>?
               <br />
               Essa ação não pode ser desfeita.
             </p>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setProductToDelete(null)}
-            >
+            <Button variant="outline" onClick={() => setProductToDelete(null)}>
               Cancelar
             </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-            >
+            <Button variant="destructive" onClick={confirmDelete}>
               Excluir
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={idsToDelete.length > 0} onOpenChange={(open) => !open && setIdsToDelete([])}>
+      <Dialog
+        open={idsToDelete.length > 0}
+        onOpenChange={(open) => !open && setIdsToDelete([])}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Excluir Produtos</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-slate-600">
-              Tem certeza que deseja excluir <strong>{idsToDelete.length}</strong> produtos selecionados?
+              Tem certeza que deseja excluir{' '}
+              <strong>{idsToDelete.length}</strong> produtos selecionados?
               <br />
               Essa ação não pode ser desfeita.
             </p>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIdsToDelete([])}
-            >
+            <Button variant="outline" onClick={() => setIdsToDelete([])}>
               Cancelar
             </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmBulkDelete}
-            >
+            <Button variant="destructive" onClick={confirmBulkDelete}>
               Excluir Selecionados
             </Button>
           </DialogFooter>

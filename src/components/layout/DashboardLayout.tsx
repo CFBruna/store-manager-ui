@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
-  PlusCircle,
   Menu,
   X,
-  LogOut,
   Store,
-  ChevronLeft,
   ChevronRight,
   ShoppingCart,
   Users,
@@ -27,15 +24,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('sidebarCollapsed') === 'true'
-  })
   const location = useLocation()
-
-  useEffect(() => {
-    localStorage.setItem('sidebarCollapsed', String(isCollapsed))
-  }, [isCollapsed])
 
   const navItems = [
     { label: 'Produtos', href: '/', icon: LayoutDashboard },
@@ -48,7 +37,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   ]
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
-  const toggleCollapse = () => setIsCollapsed(!isCollapsed)
 
   const sidebarWidth = 'w-20'
 
@@ -93,13 +81,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="h-16 flex items-center justify-center relative px-4 border-b border-gray-700">
             <Link
               to="/"
-              className={cn(
-                'flex items-center gap-2 font-bold text-xl text-white transition-all',
-                isCollapsed && 'lg:justify-center',
-              )}
+              className="flex items-center gap-2 font-bold text-xl text-white transition-all"
             >
               <Store className="w-6 h-6 text-gray-400 flex-shrink-0" />
-              {!isCollapsed && <span>StoreManager</span>}
+              <span>StoreManager</span>
             </Link>
             {/* Close button for mobile */}
             <Button
@@ -141,15 +126,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="px-2 py-2 border-t border-gray-700">
             <Link
               to="/settings"
-              onClick={() => toast.info('Configurações indisponíveis na versão demo')}
+              onClick={() =>
+                toast.info('Configurações indisponíveis na versão demo')
+              }
               className="flex flex-col items-center justify-center gap-1 px-2 py-3 text-xs font-normal rounded-lg transition-all text-gray-300 hover:bg-gray-700/50 hover:text-white"
             >
               <Settings className="w-6 h-6" />
               <span className="text-[10px] leading-tight">Config</span>
             </Link>
           </div>
-
-
         </div>
       </aside>
 
@@ -167,7 +152,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Menu />
             </Button>
             <div className="flex items-baseline gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {getPageTitle()}
+              </h1>
               {location.pathname === '/' && (
                 <span className="text-sm text-gray-500">
                   {totalCount} itens cadastrados
@@ -178,7 +165,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           <div className="flex items-center gap-8">
             <button
-              onClick={() => toast.info('Central de Ajuda indisponível na versão demo')}
+              onClick={() =>
+                toast.info('Central de Ajuda indisponível na versão demo')
+              }
               className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
             >
               <div className="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center text-[10px] font-bold">

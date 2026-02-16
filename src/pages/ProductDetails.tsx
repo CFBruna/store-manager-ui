@@ -4,12 +4,10 @@ import { useDeleteProduct } from '../hooks/useProductMutations'
 import { useFavorites } from '../contexts/FavoritesContext'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
-import { Skeleton } from '../components/ui/Skeleton'
 import {
   ArrowLeft,
   Edit,
   Trash,
-  Heart,
   Package,
   Share2,
   Rotate3d,
@@ -90,10 +88,6 @@ export function ProductDetails() {
     )
   }
 
-  const stock = product.stock ?? 0
-  const isLowStock = stock < 10 && stock > 0
-  const isOutOfStock = stock === 0
-
   return (
     <div className="container mx-auto py-8 px-4">
       <nav className="flex items-center justify-between mb-8">
@@ -116,7 +110,10 @@ export function ProductDetails() {
 
       <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
         {/* Left Column: Image Gallery */}
-        <div className="relative group cursor-pointer" onClick={() => setIs360Open(true)}>
+        <div
+          className="relative group cursor-pointer"
+          onClick={() => setIs360Open(true)}
+        >
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 flex items-center justify-center min-h-[500px] overflow-hidden relative">
             <img
               src={product.image}
@@ -127,12 +124,14 @@ export function ProductDetails() {
             {/* 360 Badge Overlay */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
               <Rotate3d className="w-4 h-4 text-teal-400" />
-              <span className="text-xs font-bold uppercase tracking-wider">Ver em 360°</span>
+              <span className="text-xs font-bold uppercase tracking-wider">
+                Ver em 360°
+              </span>
             </div>
           </div>
           <button
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation()
               toggleFavorite(product.id)
             }}
             className="absolute top-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all text-slate-400 hover:text-yellow-400 z-10"
@@ -149,7 +148,10 @@ export function ProductDetails() {
         <div className="space-y-8 lg:pt-4">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Badge variant="secondary" className="uppercase tracking-wider font-semibold text-xs py-1 px-3">
+              <Badge
+                variant="secondary"
+                className="uppercase tracking-wider font-semibold text-xs py-1 px-3"
+              >
                 {product.category}
               </Badge>
               <div className="flex items-center gap-1 text-sm font-medium text-slate-500">
@@ -190,7 +192,10 @@ export function ProductDetails() {
             <div className="flex items-center gap-4 pt-4">
               <Link
                 to={`/product/${product.id}/edit`}
-                className={cn(buttonVariants({ variant: 'outline' }), "flex-1 border-slate-200 text-slate-600 hover:text-primary hover:border-primary/30")}
+                className={cn(
+                  buttonVariants({ variant: 'outline' }),
+                  'flex-1 border-slate-200 text-slate-600 hover:text-primary hover:border-primary/30',
+                )}
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Editar Produto
@@ -217,7 +222,8 @@ export function ProductDetails() {
           </DialogHeader>
           <div className="py-4">
             <p className="text-slate-600">
-              Tem certeza que deseja excluir o produto <strong>{product.title}</strong>?
+              Tem certeza que deseja excluir o produto{' '}
+              <strong>{product.title}</strong>?
               <br />
               Essa ação não pode ser desfeita.
             </p>
@@ -281,7 +287,10 @@ export function ProductDetails() {
                   src={product.image}
                   alt=""
                   className="max-h-[50vh] w-auto object-contain absolute top-full left-0 opacity-20 transform scale-y-[-1] mask-image-gradient"
-                  style={{ maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)' }}
+                  style={{
+                    maskImage:
+                      'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)',
+                  }}
                 />
               </div>
             </div>
@@ -305,13 +314,19 @@ export function ProductDetails() {
               />
               <div className="flex justify-center pt-2">
                 <Button
-                  variant={isAutoRotate ? "secondary" : "outline"}
+                  variant={isAutoRotate ? 'secondary' : 'outline'}
                   size="sm"
                   onClick={() => setIsAutoRotate(!isAutoRotate)}
-                  className={cn("gap-2", isAutoRotate && "bg-teal-100 text-teal-700 hover:bg-teal-200")}
+                  className={cn(
+                    'gap-2',
+                    isAutoRotate &&
+                      'bg-teal-100 text-teal-700 hover:bg-teal-200',
+                  )}
                 >
-                  <Rotate3d className={cn("w-4 h-4", isAutoRotate && "animate-spin")} />
-                  {isAutoRotate ? "Parar Rotação" : "Rotação Automática"}
+                  <Rotate3d
+                    className={cn('w-4 h-4', isAutoRotate && 'animate-spin')}
+                  />
+                  {isAutoRotate ? 'Parar Rotação' : 'Rotação Automática'}
                 </Button>
               </div>
             </div>

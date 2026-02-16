@@ -3,25 +3,17 @@ import { cn } from '../../lib/utils'
 import { Check } from 'lucide-react'
 
 export interface DropdownMenuProps {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
   children?: React.ReactNode
 }
 
-export function DropdownMenu({
-  open,
-  onOpenChange,
-  children,
-}: DropdownMenuProps) {
+export function DropdownMenu({ children }: DropdownMenuProps) {
   return <div className="relative">{children}</div>
 }
 
 export function DropdownMenuTrigger({
   children,
-  asChild,
 }: {
   children: React.ReactNode
-  asChild?: boolean
 }) {
   return <>{children}</>
 }
