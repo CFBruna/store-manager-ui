@@ -94,36 +94,41 @@ export function ProductDetails() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <nav className="flex items-center justify-between mb-8">
+    <div className="container mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
+      <nav className="flex items-center justify-between mb-4 sm:mb-6 md:mb-8">
         <Link
           to="/"
           className={cn(
             buttonVariants({ variant: 'ghost' }),
-            'pl-0 text-slate-500 hover:text-primary transition-colors',
+            'pl-0 text-slate-500 hover:text-primary transition-colors h-12 sm:h-auto',
           )}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para produtos
+          <span className="hidden sm:inline">Voltar para produtos</span>
+          <span className="sm:hidden">Voltar</span>
         </Link>
         <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="text-slate-500">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-slate-500 h-12 w-12 sm:h-10 sm:w-10"
+          >
             <Share2 className="w-5 h-5" />
           </Button>
         </div>
       </nav>
 
-      <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-start">
         {/* Left Column: Image Gallery */}
         <div
-          className="relative group cursor-pointer"
+          className="relative group cursor-pointer w-full"
           onClick={() => setIs360Open(true)}
         >
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 flex items-center justify-center min-h-[500px] overflow-hidden relative">
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 md:p-12 flex items-center justify-center min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] overflow-hidden relative">
             <img
               src={product.image}
               alt={product.title}
-              className="max-h-[400px] w-auto object-contain transition-transform duration-500 group-hover:scale-110"
+              className="max-h-[250px] sm:max-h-[350px] lg:max-h-[400px] w-auto object-contain transition-transform duration-500 group-hover:scale-110"
             />
 
             {/* 360 Badge Overlay */}
@@ -139,7 +144,8 @@ export function ProductDetails() {
               e.stopPropagation()
               toggleFavorite(product.id)
             }}
-            className="absolute top-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all text-slate-400 hover:text-yellow-400 z-10"
+            className="absolute top-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all text-slate-400 hover:text-yellow-400 z-10 h-12 w-12"
+            aria-label="Favoritar"
           >
             <Star
               className={cn('w-6 h-6 transition-colors', {
@@ -150,9 +156,9 @@ export function ProductDetails() {
         </div>
 
         {/* Right Column: Product Info */}
-        <div className="space-y-8 lg:pt-4">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6 sm:space-y-8 lg:pt-4 w-full">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between gap-2">
               <Badge
                 variant="secondary"
                 className="uppercase tracking-wider font-semibold text-xs py-1 px-3"
@@ -162,44 +168,44 @@ export function ProductDetails() {
               <div className="flex items-center gap-1 text-sm font-medium text-slate-500">
                 <span className="text-amber-400 fill-amber-400">★</span>
                 <span>{product.rating?.rate ?? '0.0'}</span>
-                <span className="text-slate-300">•</span>
-                <span className="underline decoration-slate-300 underline-offset-4">
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <span className="underline decoration-slate-300 underline-offset-4 hidden sm:inline">
                   {product.rating?.count ?? 0} avaliações
                 </span>
               </div>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
               {product.title}
             </h1>
           </div>
 
-          <div className="border-t border-b border-slate-100 py-6 space-y-6">
-            <div className="flex items-end gap-4">
-              <span className="text-4xl font-bold text-slate-900">
+          <div className="border-t border-b border-slate-100 py-4 sm:py-6 space-y-4 sm:space-y-6">
+            <div className="flex items-end gap-3 sm:gap-4">
+              <span className="text-3xl sm:text-4xl font-bold text-slate-900">
                 {formatPrice(product.price)}
               </span>
               {(product.stock ?? 0) > 0 && (
-                <span className="text-sm text-green-600 font-medium mb-2 bg-green-50 px-2 py-1 rounded-md">
+                <span className="text-xs sm:text-sm text-green-600 font-medium mb-2 bg-green-50 px-2 py-1 rounded-md">
                   Em estoque: {product.stock}
                 </span>
               )}
             </div>
 
-            <p className="text-slate-600 text-lg leading-relaxed">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
               {product.description}
             </p>
           </div>
 
           {/* Actions */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Admin Actions */}
-            <div className="flex items-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 pt-2 sm:pt-4">
               <Link
                 to={`/product/${product.id}/edit`}
                 className={cn(
                   buttonVariants({ variant: 'outline' }),
-                  'flex-1 border-slate-200 text-slate-600 hover:text-primary hover:border-primary/30',
+                  'w-full sm:flex-1 border-slate-200 text-slate-600 hover:text-primary hover:border-primary/30 h-12',
                 )}
               >
                 <Edit className="w-4 h-4 mr-2" />
@@ -208,7 +214,7 @@ export function ProductDetails() {
 
               <Button
                 variant="ghost"
-                className="flex-1 text-red-500 hover:text-red-600 hover:bg-red-50"
+                className="w-full sm:flex-1 text-red-500 hover:text-red-600 hover:bg-red-50 h-12"
                 onClick={() => setIsDeleteDialogOpen(true)}
               >
                 <Trash className="w-4 h-4 mr-2" />
