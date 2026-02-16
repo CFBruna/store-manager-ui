@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useFavorites } from '../contexts/FavoritesContext'
+import { useFavorites } from '../hooks/useFavorites'
 import { useProducts } from '../hooks/useProducts'
 import {
   useDeleteProduct,

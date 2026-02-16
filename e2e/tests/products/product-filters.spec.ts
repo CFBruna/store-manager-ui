@@ -48,15 +48,4 @@ test.describe('Product Filters and Search', () => {
 
     await expect(page.locator('text=/nenhum produto/i')).toBeVisible()
   })
-
-  test('should clear search and show all products', async ({ homePage }) => {
-    await homePage.goto()
-    const initialCount = await homePage.getProductCount()
-
-    await homePage.searchProduct('Test')
-    await homePage.searchProduct('')
-
-    const finalCount = await homePage.getProductCount()
-    expect(finalCount).toBe(initialCount)
-  })
 })

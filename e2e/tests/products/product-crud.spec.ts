@@ -76,6 +76,7 @@ test.describe('Product CRUD Operations', () => {
 
     await page.getByRole('button', { name: 'Excluir', exact: true }).click()
     await page.waitForURL('/')
+    await expect(page.locator(`text=${product.title}`)).toBeHidden()
 
     const finalCount = await homePage.getProductCount()
     expect(finalCount).toBe(initialCount - 1)

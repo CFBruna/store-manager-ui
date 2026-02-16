@@ -4,7 +4,7 @@ import {
   useDeleteProduct,
   useRestoreProduct,
 } from '../hooks/useProductMutations'
-import { useFavorites } from '../contexts/FavoritesContext'
+import { useFavorites } from '../hooks/useFavorites'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import {

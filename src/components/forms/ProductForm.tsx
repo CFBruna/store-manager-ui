@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { productSchema, ProductFormValues } from '../../schemas/productSchema'
 import { Button } from '../ui/Button'
@@ -35,7 +35,7 @@ export function ProductForm({
     handleSubmit,
     setValue,
     reset,
-    watch,
+    control,
     formState: { errors },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -57,7 +57,10 @@ export function ProductForm({
     })
   }
 
-  const imageUrl = watch('image')
+  const imageUrl = useWatch({
+    control,
+    name: 'image',
+  })
 
   useEffect(() => {
     if (initialData) {
