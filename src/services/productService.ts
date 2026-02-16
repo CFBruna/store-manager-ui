@@ -15,19 +15,16 @@ const getLocalProducts = (): Product[] => {
 
 const saveLocalProduct = (product: Product) => {
   const current = getLocalProducts()
-  const updated = [product, ...current]
-  localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(updated))
-}
-
-const updateLocalProduct = (id: number, updates: ProductInput) => {
-  const current = getLocalProducts()
-  const index = current.findIndex((p) => p.id === id)
+  // If it's an override, replace the existing one
+  const index = current.findIndex((p) => p.id === product.id)
+  let updated
   if (index !== -1) {
-    current[index] = { ...current[index], ...updates } as Product
-    localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(current))
-    return true
+    updated = [...current]
+    updated[index] = product
+  } else {
+    updated = [product, ...current]
   }
-  return false
+  localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(updated))
 }
 
 const deleteLocalProduct = (id: number) => {
@@ -76,6 +73,11 @@ const getPersistentStock = (id: number): number => {
   return seed
 }
 
+const savePersistentStock = (id: number, stock: number) => {
+  const stockKey = `stock_persistent_${id}`
+  localStorage.setItem(stockKey, stock.toString())
+}
+
 export const productService = {
   getProducts: async (): Promise<Product[]> => {
     const localProducts = getLocalProducts()
@@ -86,6 +88,8 @@ export const productService = {
 
       const apiProducts = data
         .filter((p) => !deletedIds.includes(p.id))
+        // Filter out API products that have a local override
+        .filter((p) => !localProducts.some((lp) => lp.id === p.id))
         .map((product) => {
           const { title, description } = translateProduct(
             product.id,
@@ -96,7 +100,7 @@ export const productService = {
             ...product,
             title,
             description,
-            price: product.price * EXCHANGE_RATE,
+            price: Number((product.price * EXCHANGE_RATE).toFixed(2)),
             stock: getPersistentStock(product.id),
           }
         })
@@ -126,7 +130,7 @@ export const productService = {
       ...data,
       title,
       description,
-      price: data.price * EXCHANGE_RATE,
+      price: Number((data.price * EXCHANGE_RATE).toFixed(2)),
       stock: getPersistentStock(data.id),
     }
   },
@@ -138,7 +142,7 @@ export const productService = {
       ...data,
       id: Date.now(),
       title: normalizeName(product.title),
-      price: product.price,
+      price: Number(product.price.toFixed(2)),
       description: product.description,
       image: product.image,
       category: normalizeCategory(product.category),
@@ -153,24 +157,38 @@ export const productService = {
     id: number,
     product: ProductInput,
   ): Promise<Product> => {
+    // Get existing product to preserve rating, etc.
+    const existing = await productService.getProduct(id)
+
     const normalizedProduct = {
+      ...existing,
       ...product,
+      id,
       title: normalizeName(product.title),
       category: normalizeCategory(product.category),
+      price: Number(product.price.toFixed(2)),
     }
 
-    if (updateLocalProduct(id, normalizedProduct)) {
-      return { id, ...normalizedProduct } as Product
+    // Sync persistent stock if modified
+    if (normalizedProduct.stock !== undefined) {
+      savePersistentStock(id, normalizedProduct.stock)
     }
-    const { data } = await api.put<Product>(
-      `/products/${id}`,
-      normalizedProduct,
-    )
-    return { ...data, ...normalizedProduct } as Product
+
+    // Always save to local as an override
+    saveLocalProduct(normalizedProduct as Product)
+
+    try {
+      await api.put<Product>(`/products/${id}`, normalizedProduct)
+    } catch {
+      // Ignore API errors as we manage state locally
+    }
+
+    return normalizedProduct as Product
   },
 
   deleteProduct: async (id: number): Promise<Product> => {
     if (deleteLocalProduct(id)) {
+      addDeletedProductId(id)
       return { id } as Product
     }
     addDeletedProductId(id)
@@ -178,7 +196,7 @@ export const productService = {
     try {
       await api.delete<Product>(`/products/${id}`)
     } catch {
-      // Ignore API errors as we manage deletion state locally
+      // Ignore API errors
     }
 
     return { id } as Product

@@ -15,8 +15,9 @@ export const useProductMutations = () => {
   const updateProduct = useMutation({
     mutationFn: ({ id, product }: { id: number; product: ProductInput }) =>
       productService.updateProduct(id, product),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: ['products', variables.id] })
     },
   })
 

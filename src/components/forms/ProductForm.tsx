@@ -8,17 +8,16 @@ import { Label } from '../ui/Label'
 import { Product } from '../../types/product'
 import { useEffect } from 'react'
 import { useProducts } from '../../hooks/useProducts'
+import { normalizeName, normalizeCategory } from '../../lib/normalization'
+import { translateCategory } from '../../lib/i18n'
+import { Select } from '../ui/Select'
+import { useState } from 'react'
 
 interface ProductFormProps {
   initialData?: Product
   onSubmit: (data: ProductFormValues) => void
   isSubmitting?: boolean
 }
-
-import { normalizeName, normalizeCategory } from '../../lib/normalization'
-import { formatCategory } from '../../lib/formatters'
-import { Select } from '../ui/Select'
-import { useState } from 'react'
 
 export function ProductForm({
   initialData,
@@ -64,7 +63,7 @@ export function ProductForm({
     if (initialData) {
       reset({
         title: initialData.title,
-        price: initialData.price,
+        price: Number(initialData.price.toFixed(2)),
         description: initialData.description,
         image: initialData.image,
         category: initialData.category,
@@ -152,7 +151,7 @@ export function ProductForm({
                       <option value="">Selecione uma categoria</option>
                       {existingCategories.map((cat) => (
                         <option key={cat} value={cat}>
-                          {formatCategory(cat)}
+                          {translateCategory(cat)}
                         </option>
                       ))}
                       <option value="NEW_CATEGORY">
