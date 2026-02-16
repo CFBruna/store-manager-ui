@@ -20,7 +20,7 @@ const saveLocalProduct = (product: Product) => {
 
 const updateLocalProduct = (id: number, updates: ProductInput) => {
   const current = getLocalProducts()
-  const index = current.findIndex(p => p.id === id)
+  const index = current.findIndex((p) => p.id === id)
   if (index !== -1) {
     current[index] = { ...current[index], ...updates } as Product
     localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(current))
@@ -31,7 +31,7 @@ const updateLocalProduct = (id: number, updates: ProductInput) => {
 
 const deleteLocalProduct = (id: number) => {
   const current = getLocalProducts()
-  const filtered = current.filter(p => p.id !== id)
+  const filtered = current.filter((p) => p.id !== id)
   if (filtered.length !== current.length) {
     localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(filtered))
     return true
@@ -56,7 +56,7 @@ const addDeletedProductId = (id: number) => {
 
 const removeDeletedProductId = (id: number) => {
   const current = getDeletedProductIds()
-  const filtered = current.filter(pid => pid !== id)
+  const filtered = current.filter((pid) => pid !== id)
   if (filtered.length !== current.length) {
     localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(filtered))
     return true
@@ -73,14 +73,16 @@ export const productService = {
       const { data } = await api.get<Product[]>('/products')
 
       const apiProducts = data
-        .filter(p => !deletedIds.includes(p.id))
-        .map(product => ({
+        .filter((p) => !deletedIds.includes(p.id))
+        .map((product) => ({
           ...product,
           price: product.price * EXCHANGE_RATE,
-          stock: product.stock ?? Math.floor(Math.random() * 100) + 1
+          stock: product.stock ?? Math.floor(Math.random() * 100) + 1,
         }))
 
-      const validLocalProducts = localProducts.filter(p => !deletedIds.includes(p.id))
+      const validLocalProducts = localProducts.filter(
+        (p) => !deletedIds.includes(p.id),
+      )
 
       return [...validLocalProducts, ...apiProducts]
     } catch (error) {
@@ -90,14 +92,14 @@ export const productService = {
   },
 
   getProduct: async (id: number): Promise<Product> => {
-    const local = getLocalProducts().find(p => p.id === id)
+    const local = getLocalProducts().find((p) => p.id === id)
     if (local) return local
 
     const { data } = await api.get<Product>(`/products/${id}`)
     return {
       ...data,
       price: data.price * EXCHANGE_RATE,
-      stock: data.stock ?? 10
+      stock: data.stock ?? 10,
     }
   },
 
@@ -112,7 +114,7 @@ export const productService = {
       description: product.description,
       image: product.image,
       category: normalizeCategory(product.category),
-      stock: product.stock ?? 0
+      stock: product.stock ?? 0,
     }
 
     saveLocalProduct(newProduct)
@@ -132,7 +134,10 @@ export const productService = {
     if (updateLocalProduct(id, normalizedProduct)) {
       return { id, ...normalizedProduct } as Product
     }
-    const { data } = await api.put<Product>(`/products/${id}`, normalizedProduct)
+    const { data } = await api.put<Product>(
+      `/products/${id}`,
+      normalizedProduct,
+    )
     return { ...data, ...normalizedProduct } as Product
   },
 
@@ -144,7 +149,8 @@ export const productService = {
 
     try {
       await api.delete<Product>(`/products/${id}`)
-    } catch (e) {
+    } catch {
+      // Ignore API errors as we manage deletion state locally
     }
 
     return { id } as Product
@@ -155,7 +161,7 @@ export const productService = {
       return product
     }
     const currentLocal = getLocalProducts()
-    if (!currentLocal.some(p => p.id === product.id)) {
+    if (!currentLocal.some((p) => p.id === product.id)) {
       saveLocalProduct(product)
     }
 

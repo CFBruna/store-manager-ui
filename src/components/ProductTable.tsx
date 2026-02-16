@@ -106,7 +106,10 @@ export function ProductTable({
           ) : (
             <button
               onClick={handleBulkAction}
-              className={cn("flex items-center gap-2 text-sm font-medium transition-colors", bulkActionClass)}
+              className={cn(
+                'flex items-center gap-2 text-sm font-medium transition-colors',
+                bulkActionClass,
+              )}
             >
               <BulkIcon className="w-4 h-4" />
               {bulkActionLabel}
@@ -120,7 +123,9 @@ export function ProductTable({
             <TableHead className="w-12">
               <input
                 type="checkbox"
-                checked={selectedIds.length === products.length && products.length > 0}
+                checked={
+                  selectedIds.length === products.length && products.length > 0
+                }
                 onChange={toggleSelectAll}
                 className="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
               />
@@ -138,7 +143,10 @@ export function ProductTable({
           {products.map((product) => (
             <TableRow
               key={product.id}
-              className={cn(selectedIds.includes(product.id) && "bg-teal-50/50 hover:bg-teal-50")}
+              className={cn(
+                selectedIds.includes(product.id) &&
+                  'bg-teal-50/50 hover:bg-teal-50',
+              )}
             >
               <TableCell>
                 <input
@@ -183,11 +191,13 @@ export function ProductTable({
                 </span>
               </TableCell>
               <TableCell>
-                <span className={cn(
-                  "text-gray-900",
-                  (product.stock || 0) < 10 && "text-amber-600 font-medium",
-                  (product.stock || 0) === 0 && "text-red-600 font-bold"
-                )}>
+                <span
+                  className={cn(
+                    'text-gray-900',
+                    (product.stock || 0) < 10 && 'text-amber-600 font-medium',
+                    (product.stock || 0) === 0 && 'text-red-600 font-bold',
+                  )}
+                >
                   {product.stock ?? 0}
                 </span>
               </TableCell>

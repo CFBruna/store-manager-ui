@@ -17,9 +17,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
         />
       )}
       {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           {children}
         </div>
       )}
@@ -47,12 +45,28 @@ export function DialogContent({
   )
 }
 
-export function DialogHeader({ children, className }: { children: React.ReactNode, className?: string }) {
-  return <div className={cn("mb-4", className)}>{children}</div>
+export function DialogHeader({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <div className={cn('mb-4', className)}>{children}</div>
 }
 
-export function DialogTitle({ children, className }: { children: React.ReactNode, className?: string }) {
-  return <h2 className={cn("text-xl font-bold text-gray-900", className)}>{children}</h2>
+export function DialogTitle({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <h2 className={cn('text-xl font-bold text-gray-900', className)}>
+      {children}
+    </h2>
+  )
 }
 
 export function DialogFooter({ children }: { children: React.ReactNode }) {
