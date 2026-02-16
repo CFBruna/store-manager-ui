@@ -1,22 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react'
-
-interface FavoritesContextType {
-  favorites: Set<number>
-  toggleFavorite: (id: number) => void
-  addFavorites: (ids: number[]) => void
-  removeFavorites: (ids: number[]) => void
-  isFavorite: (id: number) => boolean
-}
-
-export const FavoritesContext = createContext<FavoritesContextType | undefined>(
-  undefined,
-)
+import { useEffect, useState, ReactNode } from 'react'
+import { FavoritesContext } from './favorites-context'
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Set<number>>(() => {
@@ -72,12 +55,4 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       {children}
     </FavoritesContext.Provider>
   )
-}
-
-export function useFavorites() {
-  const context = useContext(FavoritesContext)
-  if (context === undefined) {
-    throw new Error('useFavorites must be used within a FavoritesProvider')
-  }
-  return context
 }

@@ -46,20 +46,23 @@ export function ProductFormPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-2xl">
-      <div className="mb-8 flex items-center gap-4">
+    <div className="container mx-auto py-4 sm:py-6 md:py-8 max-w-2xl px-4">
+      <div className="mb-6 sm:mb-8 flex items-center gap-3 sm:gap-4">
         <Link
           to="/"
-          className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+          className={cn(
+            buttonVariants({ variant: 'ghost', size: 'icon' }),
+            'h-12 w-12 sm:h-10 sm:w-10',
+          )}
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-800">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-800">
           {isEditing ? 'Editar Produto' : 'Novo Produto'}
         </h1>
       </div>
 
-      <div className="bg-white p-8 rounded-xl border shadow-sm">
+      <div className="bg-white p-4 sm:p-6 md:p-8 rounded-xl border shadow-sm">
         <ProductForm
           initialData={product}
           onSubmit={handleSubmit}

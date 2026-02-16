@@ -7,6 +7,8 @@
 
 🔗 **Live Demo:** [https://store-manager.brunadev.com](https://store-manager.brunadev.com)
 
+![Store Manager Products](public/products.png)
+
 **A high-performance, strategic product management dashboard engineered for scalability, real-time reactivity, and a premium professional user experience.**
 
 Developed by **Bruna Menezes**.
@@ -51,6 +53,27 @@ I chose React Query over traditional state management for server-state handling:
 - **360° Interaction**: Interactive "3D simulation" viewer for product details.
 - **Zero CLS**: Comprehensive use of Skeleton Loaders to prevent layout shifts.
 - **Responsive Layout**: Pixel-perfect adaptation across mobile, tablet, and ultra-wide displays.
+
+---
+
+## 🧪 Testing & Quality Assurance
+
+This project maintains high reliability standards through automated **End-to-End (E2E) testing** with **Playwright**.
+
+### Test Suite Coverage
+- **Critical Paths**: Smoke tests for home load, navigation, and core visibility.
+- **Product CRUD**: Full lifecycle validation (Create, Read, Update, Delete).
+- **Advanced Filtering**: Verification of search algorithms and category filters.
+- **Mobile Responsiveness**: Automated checks for viewport adaptability, touch targets (48px+), and layout shifts (zero CLS).
+
+### Running Tests
+```bash
+# Run full E2E suite (Desktop + Mobile)
+pnpm test:e2e
+
+# Run with UI Mode (Interactive Debugging)
+pnpm test:e2e:ui
+```
 
 ---
 
