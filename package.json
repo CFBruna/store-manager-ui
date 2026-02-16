@@ -57,6 +57,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write src",
+    "test": "vitest run",
     "prepare": "husky"
   }
 }

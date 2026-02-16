@@ -8,7 +8,10 @@ export const productSchema = z.object({
     .min(10, 'A descrição deve ter pelo menos 10 caracteres'),
   image: z.string().url('URL da imagem inválida'),
   category: z.string().min(3, 'A categoria deve ter pelo menos 3 caracteres'),
-  stock: z.number().int('O estoque deve ser um número inteiro').min(0, 'O estoque não pode ser negativo').default(0),
+  stock: z
+    .number()
+    .int('O estoque deve ser um número inteiro')
+    .min(0, 'O estoque não pode ser negativo'),
 })
 
 export type ProductFormValues = z.infer<typeof productSchema>
