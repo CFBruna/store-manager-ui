@@ -78,13 +78,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="h-16 flex items-center justify-center relative px-4 border-b border-gray-700">
+          <div className="h-20 flex items-center justify-center relative px-4 border-b border-gray-700/50">
             <Link
               to="/"
-              className="flex items-center gap-2 font-bold text-xl text-white transition-all"
+              className="flex items-center justify-center transition-all hover:scale-110 active:scale-95"
             >
-              <Store className="w-6 h-6 text-gray-400 flex-shrink-0" />
-              <span>StoreManager</span>
+              <Store className="w-9 h-9 text-teal-500 flex-shrink-0" />
             </Link>
             {/* Close button for mobile */}
             <Button
