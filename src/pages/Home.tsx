@@ -24,7 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
 } from '../components/ui/DropdownMenu'
-import { formatCategory } from '../lib/formatters'
+import { translateCategory } from '../lib/i18n'
 
 export function Home() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null)
@@ -220,7 +220,7 @@ export function Home() {
                   checked={selectedCategories.includes(category)}
                   onCheckedChange={() => toggleCategory(category)}
                 >
-                  {formatCategory(category)}
+                  {translateCategory(category)}
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>
@@ -432,7 +432,7 @@ export function Home() {
                       className="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
                     />
                     <span className="text-sm text-gray-700">
-                      {formatCategory(category)}
+                      {translateCategory(category)}
                     </span>
                   </label>
                 ))}

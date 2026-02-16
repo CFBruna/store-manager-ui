@@ -13,7 +13,6 @@ import { Star, Edit2, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { cn, formatPrice } from '../lib/utils'
 import { useFavorites } from '../hooks/useFavorites'
-import { formatCategory } from '../lib/formatters'
 import { translateCategory } from '../lib/i18n'
 
 interface ProductTableProps {
@@ -188,7 +187,7 @@ export function ProductTable({
               </TableCell>
               <TableCell>
                 <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                  {formatCategory(translateCategory(product.category))}
+                  {translateCategory(product.category)}
                 </span>
               </TableCell>
               <TableCell>
