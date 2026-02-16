@@ -140,46 +140,49 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:ml-20 transition-all duration-300">
         {/* Top Header */}
-        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-20">
-          <div className="flex items-center gap-4">
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-20">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
-              className="lg:hidden"
+              className="lg:hidden flex-shrink-0"
             >
               <Menu />
             </Button>
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">
+            <div className="flex items-baseline gap-2 sm:gap-3 min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
                 {getPageTitle()}
               </h1>
               {location.pathname === '/' && (
-                <span className="text-sm text-gray-500">
+                <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap hidden xs:inline">
                   {totalCount} itens cadastrados
                 </span>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2 sm:gap-4 md:gap-8 flex-shrink-0">
             <button
               onClick={() =>
                 toast.info('Central de Ajuda indisponível na versão demo')
               }
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors p-2"
+              aria-label="Ajuda"
             >
               <div className="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center text-[10px] font-bold">
                 ?
               </div>
-              <span className="text-sm font-medium">Ajuda</span>
+              <span className="text-sm font-medium hidden md:inline">
+                Ajuda
+              </span>
             </button>
 
             <button
-              className="flex items-center gap-3 pl-6 border-l border-gray-200 hover:opacity-80 transition-opacity text-left"
+              className="flex items-center gap-2 sm:gap-3 sm:pl-4 md:pl-6 sm:border-l border-gray-200 hover:opacity-80 transition-opacity text-left min-h-[48px]"
               onClick={() => toast.info('Menu de usuário em desenvolvimento')}
             >
-              <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center text-xs font-bold text-white">
+              <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                 SM
               </div>
               <div className="hidden sm:block">
@@ -188,13 +191,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">admin@loja.com</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-400 rotate-90" />
+              <ChevronRight className="w-4 h-4 text-gray-400 rotate-90 hidden sm:block" />
             </button>
           </div>
         </header>
 
         <main className="flex-1 bg-white">
-          <div className="max-w-7xl mx-auto px-8 py-6">{children}</div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>
