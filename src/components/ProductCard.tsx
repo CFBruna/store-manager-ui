@@ -7,6 +7,7 @@ import { buttonVariants } from './ui/buttonVariants'
 import { formatPrice, cn } from '../lib/utils'
 import { Edit, Trash } from 'lucide-react'
 import { Skeleton } from './ui/Skeleton'
+import { translateCategory } from '../lib/i18n'
 
 interface ProductCardProps {
   product: Product
@@ -29,7 +30,7 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
           variant="secondary"
           className="absolute top-3 right-3 shadow-sm bg-white/90 backdrop-blur-sm"
         >
-          {product.category}
+          {translateCategory(product.category)}
         </Badge>
       </div>
 

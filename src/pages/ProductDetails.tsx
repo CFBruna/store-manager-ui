@@ -17,6 +17,7 @@ import {
 import { formatPrice, cn } from '../lib/utils'
 import { buttonVariants } from '../components/ui/buttonVariants'
 import { toast } from 'sonner'
+import { translateCategory } from '../lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -152,7 +153,7 @@ export function ProductDetails() {
                 variant="secondary"
                 className="uppercase tracking-wider font-semibold text-xs py-1 px-3"
               >
-                {product.category}
+                {translateCategory(product.category)}
               </Badge>
               <div className="flex items-center gap-1 text-sm font-medium text-slate-500">
                 <span className="text-amber-400 fill-amber-400">★</span>

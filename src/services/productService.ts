@@ -1,6 +1,7 @@
 import { api } from '../lib/axios'
 import { Product, ProductInput } from '../types/product'
 import { normalizeName, normalizeCategory } from '../lib/normalization'
+import { translateProduct } from '../lib/i18n'
 
 const EXCHANGE_RATE = 5.5
 
@@ -64,6 +65,17 @@ const removeDeletedProductId = (id: number) => {
   return false
 }
 
+const getPersistentStock = (id: number): number => {
+  const stockKey = `stock_persistent_${id}`
+  const stored = localStorage.getItem(stockKey)
+  if (stored) return parseInt(stored, 10)
+
+  // Deterministic seed based on id to keep it consistent without random
+  const seed = ((id * 1597) % 100) + 1
+  localStorage.setItem(stockKey, seed.toString())
+  return seed
+}
+
 export const productService = {
   getProducts: async (): Promise<Product[]> => {
     const localProducts = getLocalProducts()
@@ -74,11 +86,20 @@ export const productService = {
 
       const apiProducts = data
         .filter((p) => !deletedIds.includes(p.id))
-        .map((product) => ({
-          ...product,
-          price: product.price * EXCHANGE_RATE,
-          stock: product.stock ?? Math.floor(Math.random() * 100) + 1,
-        }))
+        .map((product) => {
+          const { title, description } = translateProduct(
+            product.id,
+            product.title,
+            product.description,
+          )
+          return {
+            ...product,
+            title,
+            description,
+            price: product.price * EXCHANGE_RATE,
+            stock: getPersistentStock(product.id),
+          }
+        })
 
       const validLocalProducts = localProducts.filter(
         (p) => !deletedIds.includes(p.id),
@@ -96,10 +117,17 @@ export const productService = {
     if (local) return local
 
     const { data } = await api.get<Product>(`/products/${id}`)
+    const { title, description } = translateProduct(
+      data.id,
+      data.title,
+      data.description,
+    )
     return {
       ...data,
+      title,
+      description,
       price: data.price * EXCHANGE_RATE,
-      stock: data.stock ?? 10,
+      stock: getPersistentStock(data.id),
     }
   },
 
