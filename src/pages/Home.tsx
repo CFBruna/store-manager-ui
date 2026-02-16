@@ -1,15 +1,14 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '../hooks/useProducts'
 import {
   useDeleteProduct,
   useRestoreProduct,
 } from '../hooks/useProductMutations'
-import { useClickOutside } from '../hooks/useClickOutside'
 import { ProductTable } from '../components/ProductTable'
 import { Product } from '../types/product'
 import { Input } from '../components/ui/Input'
-import { Search, Plus, Filter, Download, X, Scan } from 'lucide-react'
+import { Search, Plus, Filter, Download, X, Scan, List } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatPrice } from '../lib/utils'
 import { Button } from '../components/ui/Button'
@@ -162,54 +161,113 @@ export function Home() {
     selectedCategories.length + (priceRange.min || priceRange.max ? 1 : 0)
 
   const categoriesDropdownRef = useRef<HTMLDivElement>(null)
+  const categoriesDropdownContentRef = useRef<HTMLDivElement>(null)
 
-  useClickOutside(categoriesDropdownRef, () => {
-    setShowCategoriesDropdown(false)
-  })
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node
+      const isOutsideButton =
+        categoriesDropdownRef.current &&
+        !categoriesDropdownRef.current.contains(target)
+      const isOutsideDropdown =
+        categoriesDropdownContentRef.current &&
+        !categoriesDropdownContentRef.current.contains(target)
+
+      if (isOutsideButton && isOutsideDropdown) {
+        setShowCategoriesDropdown(false)
+      }
+    }
+
+    if (showCategoriesDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+        document.removeEventListener('touchstart', handleClickOutside)
+      }
+    }
+  }, [showCategoriesDropdown])
 
   return (
     <div className="space-y-6">
       {/* Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <div className="relative flex-1">
+        {/* Search bar - full width on mobile, flexible on desktop */}
+        <div className="relative w-full sm:flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             type="text"
             placeholder="Item ou código"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-10"
+            className="pl-9 h-12 sm:h-10"
           />
         </div>
-        <Button
-          variant="outline"
-          className="gap-2 h-10 font-normal text-gray-600 border-gray-200"
-          onClick={() => setShowFiltersDialog(true)}
-        >
-          <Filter className="w-4 h-4" />
-          Filtros
-          {activeFiltersCount > 0 && (
-            <span className="ml-1 px-1.5 py-0.5 bg-teal-500 text-white text-xs rounded-full">
-              {activeFiltersCount}
-            </span>
-          )}
-        </Button>
-        <div className="relative" ref={categoriesDropdownRef}>
+
+        {/* Action buttons - horizontal scroll on mobile, normal flex on desktop */}
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible sm:pb-0">
           <Button
             variant="outline"
-            className="gap-2 h-10 font-normal text-gray-600 border-gray-200"
-            onClick={() => setShowCategoriesDropdown(!showCategoriesDropdown)}
+            className="gap-2 h-12 sm:h-10 font-normal text-gray-600 border-gray-200 whitespace-nowrap flex-shrink-0"
+            onClick={() => setShowFiltersDialog(true)}
           >
             <Filter className="w-4 h-4" />
-            Categorias
-            {selectedCategories.length > 0 && (
-              <span className="ml-1 px-1.5 py-0.5 bg-teal-500 text-white text-xs rounded-full">
-                {selectedCategories.length}
+            <span className="hidden sm:inline">Filtros</span>
+            {activeFiltersCount > 0 && (
+              <span className="hidden sm:inline ml-1 px-1.5 py-0.5 bg-teal-500 text-white text-xs rounded-full">
+                {activeFiltersCount}
               </span>
             )}
           </Button>
-          {showCategoriesDropdown && (
-            <DropdownMenuContent>
+          <div className="relative flex-shrink-0" ref={categoriesDropdownRef}>
+            <Button
+              variant="outline"
+              className="gap-2 h-12 sm:h-10 font-normal text-gray-600 border-gray-200 whitespace-nowrap"
+              onClick={() => setShowCategoriesDropdown(!showCategoriesDropdown)}
+            >
+              <List className="w-4 h-4" />
+              Categorias
+              {selectedCategories.length > 0 && (
+                <span className="hidden sm:inline ml-1 px-1.5 py-0.5 bg-teal-500 text-white text-xs rounded-full">
+                  {selectedCategories.length}
+                </span>
+              )}
+            </Button>
+          </div>
+          <Button
+            variant="outline"
+            className="gap-2 h-12 sm:h-10 font-normal text-gray-600 border-gray-200 whitespace-nowrap flex-shrink-0"
+            onClick={exportToCSV}
+          >
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Exportar</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-12 w-12 sm:h-10 sm:w-10 text-gray-400 border-gray-200 flex-shrink-0"
+            onClick={() => toast.info('Scanner de código de barras em breve!')}
+          >
+            <Scan className="w-5 h-5" />
+          </Button>
+
+          <Link to="/product/new" className="flex-shrink-0">
+            <Button className="h-12 sm:h-10 bg-teal-500 hover:bg-teal-600 text-white font-medium px-4 sm:px-6 whitespace-nowrap">
+              <Plus className="w-5 h-5 sm:mr-2" />
+              <span className="hidden sm:inline">Produto</span>
+            </Button>
+          </Link>
+        </div>
+
+        {/* Dropdown de categorias renderizado fora do container com scroll */}
+        {showCategoriesDropdown && (
+          <div
+            className="relative px-4 sm:px-0 -mt-2 mb-2"
+            ref={categoriesDropdownContentRef}
+          >
+            <DropdownMenuContent className="w-full max-w-[calc(100vw-2rem)] sm:w-auto sm:max-w-none">
               {categories.map((category) => (
                 <DropdownMenuCheckboxItem
                   key={category}
@@ -220,77 +278,69 @@ export function Home() {
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>
-          )}
-        </div>
-        <Button
-          variant="outline"
-          className="gap-2 h-10 font-normal text-gray-600 border-gray-200"
-          onClick={exportToCSV}
-        >
-          <Download className="w-4 h-4" />
-          Exportar
-        </Button>
-
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-10 w-10 text-gray-400 border-gray-200"
-          onClick={() => toast.info('Scanner de código de barras em breve!')}
-        >
-          <Scan className="w-5 h-5" />
-        </Button>
-
-        <Link to="/product/new">
-          <Button className="h-10 bg-teal-500 hover:bg-teal-600 text-white font-medium px-6">
-            <Plus className="w-5 h-5 mr-2" />
-            Produto
-          </Button>
-        </Link>
+          </div>
+        )}
       </div>
 
       {/* Inline Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 bg-gray-50 p-4 rounded-xl">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 mb-1">Valor em estoque</p>
-          <p className="text-base font-semibold text-gray-900">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4 bg-gray-50 p-3 sm:p-4 rounded-xl">
+        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-1">
+            Valor em estoque
+          </p>
+          <p className="text-sm sm:text-base font-semibold text-gray-900">
             {formatPrice(stockValue)}
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 mb-1">Custo do estoque</p>
-          <p className="text-base font-semibold text-gray-900">
+        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-1">
+            Custo do estoque
+          </p>
+          <p className="text-sm sm:text-base font-semibold text-gray-900">
             {formatPrice(stockCost)}
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 mb-1">Lucro previsto</p>
-          <p className="text-base font-semibold text-gray-900">
+        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-1">
+            Lucro previsto
+          </p>
+          <p className="text-sm sm:text-base font-semibold text-gray-900">
             {formatPrice(expectedProfit)}
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 mb-1">Estoque baixo</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-base font-semibold text-gray-900">{lowStock}</p>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
+        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-1">
+            Estoque baixo
+          </p>
+          <div className="flex items-baseline gap-1 sm:gap-2">
+            <p className="text-sm sm:text-base font-semibold text-gray-900">
+              {lowStock}
+            </p>
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
               ●
             </span>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 mb-1">Sem estoque</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-base font-semibold text-gray-900">
+        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-1">
+            Sem estoque
+          </p>
+          <div className="flex items-baseline gap-1 sm:gap-2">
+            <p className="text-sm sm:text-base font-semibold text-gray-900">
               {outOfStock}
             </p>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
               ●
             </span>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 mb-1">Em estoque</p>
-          <p className="text-base font-semibold text-gray-900">{inStock}</p>
+        <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-1">
+            Em estoque
+          </p>
+          <p className="text-sm sm:text-base font-semibold text-gray-900">
+            {inStock}
+          </p>
         </div>
       </div>
 
