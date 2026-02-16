@@ -5,6 +5,8 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
 [![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 
+🔗 **Live Demo:** [https://store-manager.brunadev.com](https://store-manager.brunadev.com)
+
 **A high-performance, strategic product management dashboard engineered for scalability, real-time reactivity, and a premium professional user experience.**
 
 Developed by **Bruna Menezes**.
